@@ -257,6 +257,7 @@ let player_sprite: Sprite = null
 let minimap_sprite: Sprite = null
 let tilemaps: tiles.TileMapData[][] = []
 let engine_sprite_ui_tps: TextSprite = null
+let isDebugging = 0
 let isPaused = 0
 let is_ui_enabled = 0
 setupPlayer()
@@ -266,7 +267,7 @@ isPaused = 0
 if (isDebugging) {
     // to optimize: when debugging is toggled on, run this code a single time, then destroy the sprite if debugging is disabled again.
     // 
-    // At the moment, you have to restart the entire thing to view the tickrate ui icon in-game.- 
+    // At the moment, you have to restart the entire thing to view the tickrate ui icon in-game.-
     engine_sprite_ui_tps = textsprite.create("0", 8, 1)
 }
 game.onUpdate(function () {
