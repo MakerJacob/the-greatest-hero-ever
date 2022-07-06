@@ -116,7 +116,7 @@ function checkPlayerMovement_x () {
 }
 function setupWorld () {
     tilemaps = [[
-    tilemap`level1`,
+    tilemap`overworld`,
     tilemap`level5`,
     tilemap`level8`,
     tilemap`level15`
