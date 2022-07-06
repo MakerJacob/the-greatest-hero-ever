@@ -7,6 +7,26 @@ namespace SpriteKind {
     export const ui = SpriteKind.create()
 }
 /**
+ * Today:
+ * 
+ * - player spawning system in tilemap
+ * 
+ * - cutscene as a quick thing
+ * 
+ * - heart system - naturally regen over time?
+ * 
+ * - so we can take lava damage
+ * 
+ * Later:
+ * 
+ * - loot system
+ * 
+ * - make chests drop loot
+ * 
+ * - potion system
+ * 
+ * - quick healing potion
+ * 
  * TO DO:
  * 
  * - re-do the mapping system
@@ -240,7 +260,7 @@ isPaused = 0
 if (isDebugging) {
     // to optimize: when debugging is toggled on, run this code a single time, then destroy the sprite if debugging is disabled again.
     // 
-    // At the moment, you have to restart the entire thing to view the tickrate ui icon in-game.
+    // At the moment, you have to restart the entire thing to view the tickrate ui icon in-game.- 
     engine_sprite_ui_tps = textsprite.create("0", 8, 1)
 }
 game.onUpdate(function () {
