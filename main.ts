@@ -63,11 +63,15 @@ function hideMinimap () {
 	
 }
 function debugging () {
-    engine_ticks += 1
-    console.logValue("ticks", engine_ticks)
-    engine_currentMsSinceStart = game.runtime()
-    engine_previousMsSinceStart = game.runtime()
-    engine_delta = 0
+    engine_currentSecondTicks += 1
+    engine_msSinceLastTick = game.runtime() - engine_previousMsSinceStart
+    console.logValue("ms since last tick", engine_msSinceLastTick)
+    if (engine_msSinceLastTick >= 1000) {
+        engine_currentTPS = engine_currentSecondTicks
+        engine_currentSecondTicks = 0
+        engine_previousMsSinceStart = game.runtime()
+    }
+    console.logValue("tps", engine_currentTPS)
 }
 function checkPlayerMovement_x () {
     if (controller.left.isPressed() || controller.right.isPressed()) {
@@ -288,13 +292,14 @@ let currentTileMap_y = 0
 let currentTileMap_x = 0
 let tileID = 0
 let player_speed = 0
-let engine_delta = 0
+let engine_currentTPS = 0
 let engine_previousMsSinceStart = 0
-let engine_currentMsSinceStart = 0
-let engine_ticks = 0
+let engine_msSinceLastTick = 0
+let engine_currentSecondTicks = 0
 let player_sprite: Sprite = null
 let minimap_sprite: Sprite = null
 let tilemaps: tiles.TileMapData[][] = []
+let engine_sprite_ui_tps: TextSprite = null
 let isPaused = 0
 let is_ui_enabled = 0
 setupPlayer()
@@ -302,6 +307,12 @@ setupWorld()
 is_ui_enabled = 0
 let isDebugging = 0
 isPaused = 0
+if (isDebugging) {
+    // to optimize: when debugging is toggled on, run this code a single time, then destroy the sprite if debugging is disabled again.
+    // 
+    // At the moment, you have to restart the entire thing to view the tickrate ui icon in-game.
+    engine_sprite_ui_tps = textsprite.create("0", 8, 1)
+}
 game.onUpdate(function () {
     if (!(isPaused)) {
         // This currently:
@@ -320,5 +331,7 @@ game.onUpdate(function () {
     }
     if (isDebugging) {
         debugging()
+        engine_sprite_ui_tps.setText(convertToText(engine_currentTPS))
+        engine_sprite_ui_tps.setPosition(scene.cameraProperty(CameraProperty.X) - 60, scene.cameraProperty(CameraProperty.Y) - 40)
     }
 })
