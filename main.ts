@@ -132,7 +132,7 @@ function setupWorld () {
     tilemap`level`
     ]]
     currentTileMap_x = 2
-    currentTileMap_y = 0
+    currentTileMap_y = 3
     loadTileMap()
 }
 function createMinimapImage () {
