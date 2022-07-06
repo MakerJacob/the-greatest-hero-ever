@@ -86,28 +86,6 @@ function checkPlayerMovement_x () {
         player_sprite.fx = 300
     }
 }
-function regenerateTileMap () {
-    for (let i_col = 0; i_col <= 15; i_col++) {
-        for (let j_row = 0; j_row <= 15; j_row++) {
-            tileID = randint(0, 6)
-            if (tileID == 0) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tileGrass2)
-            } else if (tileID == 1) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tileGrass1)
-            } else if (tileID == 2) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tilePath5)
-            } else if (tileID == 3) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tilePath1)
-            } else if (tileID == 4) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tileGrass3)
-            } else if (tileID == 5) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tilePath6)
-            } else {
-            	
-            }
-        }
-    }
-}
 function setupWorld () {
     tilemaps = [[
     tilemap`level1`,
@@ -128,24 +106,7 @@ function setupWorld () {
     currentTileMap_x = 2
     currentTileMap_y = 0
     loadTileMap()
-    minimap_sprite = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.ui)
+    minimap_sprite = sprites.create(assets.image`arstarst`, SpriteKind.ui)
     minimap_x = -45
     minimap_y = -25
 }
@@ -156,24 +117,7 @@ function updateMinimapImage () {
         minimap.includeSprite(minimap2, player_sprite, MinimapSpriteScale.MinimapScale)
         minimap_sprite.setImage(minimap.getImage(minimap2))
     } else {
-        minimap_sprite.setImage(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `)
+        minimap_sprite.setImage(assets.image`arst`)
     }
 }
 function loadTileMap () {
@@ -191,24 +135,7 @@ function checkInputs () {
     }
 }
 function setupPlayer () {
-    player_sprite = sprites.create(img`
-        . . . . . . f f f f . . . . . . 
-        . . . . f f f 2 2 f f f . . . . 
-        . . . f f f 2 2 2 2 f f f . . . 
-        . . f f f e e e e e e f f f . . 
-        . . f f e 2 2 2 2 2 2 e e f . . 
-        . . f e 2 f f f f f f 2 e f . . 
-        . . f f f f e e e e f f f f . . 
-        . f f e f b f 4 4 f b f e f f . 
-        . f e e 4 1 f d d f 1 4 e e f . 
-        . . f e e d d d d d d e e f . . 
-        . . . f e e 4 4 4 4 e e f . . . 
-        . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-        . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-        . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-        . . . . . f f f f f f . . . . . 
-        . . . . . f f . . f f . . . . . 
-        `, SpriteKind.Player)
+    player_sprite = sprites.create(assets.image`arstarstarst`, SpriteKind.Player)
     scene.cameraFollowSprite(player_sprite)
     player_speed = 70
     characterAnimations.loopFrames(
@@ -290,7 +217,6 @@ let minimap_y = 0
 let minimap_x = 0
 let currentTileMap_y = 0
 let currentTileMap_x = 0
-let tileID = 0
 let player_speed = 0
 let engine_currentTPS = 0
 let engine_previousMsSinceStart = 0
