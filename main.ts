@@ -7,6 +7,25 @@ namespace SpriteKind {
     export const ui = SpriteKind.create()
 }
 /**
+ * TO DO:
+ * 
+ * - re-do the mapping system
+ * 
+ * - Enter-able caves and areas that vary in light
+ * 
+ * - lighting system
+ * 
+ * - combat
+ * 
+ * - item/loot drops
+ * 
+ * - re-create pause system + draw minimap
+ * 
+ * DONE:
+ * 
+ * - draw/log tick rate
+ */
+/**
  * To Do:
  */
 /**
@@ -44,8 +63,16 @@ function setCurrentPlayerAnimationState () {
         characterAnimations.setCharacterState(player_sprite, characterAnimations.rule(Predicate.NotMoving))
     }
 }
-function hideMinimap () {
-	
+function debugging () {
+    engine_currentSecondTicks += 1
+    engine_msSinceLastTick = game.runtime() - engine_previousMsSinceStart
+    console.logValue("ms since last tick", engine_msSinceLastTick)
+    if (engine_msSinceLastTick >= 1000) {
+        engine_currentTPS = engine_currentSecondTicks
+        engine_currentSecondTicks = 0
+        engine_previousMsSinceStart = game.runtime()
+    }
+    console.logValue("tps", engine_currentTPS)
 }
 function checkPlayerMovement_x () {
     if (controller.left.isPressed() || controller.right.isPressed()) {
@@ -58,28 +85,6 @@ function checkPlayerMovement_x () {
         }
     } else {
         player_sprite.fx = 300
-    }
-}
-function regenerateTileMap () {
-    for (let i_col = 0; i_col <= 15; i_col++) {
-        for (let j_row = 0; j_row <= 15; j_row++) {
-            tileID = randint(0, 6)
-            if (tileID == 0) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tileGrass2)
-            } else if (tileID == 1) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tileGrass1)
-            } else if (tileID == 2) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tilePath5)
-            } else if (tileID == 3) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tilePath1)
-            } else if (tileID == 4) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tileGrass3)
-            } else if (tileID == 5) {
-                tiles.setTileAt(tiles.getTileLocation(i_col, j_row), sprites.castle.tilePath6)
-            } else {
-            	
-            }
-        }
     }
 }
 function setupWorld () {
@@ -102,52 +107,21 @@ function setupWorld () {
     currentTileMap_x = 2
     currentTileMap_y = 0
     loadTileMap()
-    minimap_sprite = sprites.create(img`
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        . . . . . . . . . . . . . . . . 
-        `, SpriteKind.ui)
+}
+function createMinimapImage () {
+    // Not using this right now
+    minimap_sprite = sprites.create(assets.image`arstarst`, SpriteKind.ui)
     minimap_x = -45
     minimap_y = -25
 }
 function updateMinimapImage () {
     if (is_ui_enabled == 1) {
         updateMinimapPosition()
-        minimap2 = minimap.minimap(MinimapScale.Eighth, 1, 8)
-        minimap.includeSprite(minimap2, player_sprite, MinimapSpriteScale.Double)
+        minimap2 = minimap.minimap(MinimapScale.Half, 1, 8)
+        minimap.includeSprite(minimap2, player_sprite, MinimapSpriteScale.MinimapScale)
         minimap_sprite.setImage(minimap.getImage(minimap2))
     } else {
-        minimap_sprite.setImage(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `)
+        minimap_sprite.destroy()
     }
 }
 function loadTileMap () {
@@ -158,30 +132,14 @@ function loadTileMap () {
 function checkInputs () {
     if (controller.B.isPressed() && b_button_was_pressed == 0) {
         is_ui_enabled = 1 - is_ui_enabled
+        isPaused = 1 - is_ui_enabled
         b_button_was_pressed = 1
     } else if (!(controller.B.isPressed()) && b_button_was_pressed == 1) {
         b_button_was_pressed = 0
     }
 }
 function setupPlayer () {
-    player_sprite = sprites.create(img`
-        . . . . . . f f f f . . . . . . 
-        . . . . f f f 2 2 f f f . . . . 
-        . . . f f f 2 2 2 2 f f f . . . 
-        . . f f f e e e e e e f f f . . 
-        . . f f e 2 2 2 2 2 2 e e f . . 
-        . . f e 2 f f f f f f 2 e f . . 
-        . . f f f f e e e e f f f f . . 
-        . f f e f b f 4 4 f b f e f f . 
-        . f e e 4 1 f d d f 1 4 e e f . 
-        . . f e e d d d d d d e e f . . 
-        . . . f e e 4 4 4 4 e e f . . . 
-        . . e 4 f 2 2 2 2 2 2 f 4 e . . 
-        . . 4 d f 2 2 2 2 2 2 f d 4 . . 
-        . . 4 4 f 4 4 5 5 4 4 f 4 4 . . 
-        . . . . . f f f f f f . . . . . 
-        . . . . . f f . . f f . . . . . 
-        `, SpriteKind.Player)
+    player_sprite = sprites.create(assets.image`arstarstarst`, SpriteKind.Player)
     scene.cameraFollowSprite(player_sprite)
     player_speed = 70
     characterAnimations.loopFrames(
@@ -263,15 +221,28 @@ let minimap_y = 0
 let minimap_x = 0
 let currentTileMap_y = 0
 let currentTileMap_x = 0
-let tileID = 0
 let player_speed = 0
+let engine_currentTPS = 0
+let engine_previousMsSinceStart = 0
+let engine_msSinceLastTick = 0
+let engine_currentSecondTicks = 0
 let player_sprite: Sprite = null
 let minimap_sprite: Sprite = null
 let tilemaps: tiles.TileMapData[][] = []
+let engine_sprite_ui_tps: TextSprite = null
+let isPaused = 0
 let is_ui_enabled = 0
 setupPlayer()
 setupWorld()
 is_ui_enabled = 0
+let isDebugging = 0
+isPaused = 0
+if (isDebugging) {
+    // to optimize: when debugging is toggled on, run this code a single time, then destroy the sprite if debugging is disabled again.
+    // 
+    // At the moment, you have to restart the entire thing to view the tickrate ui icon in-game.
+    engine_sprite_ui_tps = textsprite.create("0", 8, 1)
+}
 game.onUpdate(function () {
     // This currently:
     // - Checks if the player is pressing a key
@@ -283,9 +254,10 @@ game.onUpdate(function () {
     checkPlayerMovement_y()
     setCurrentPlayerAnimationState()
     checkInputs()
-    updateMinimapImage()
     checkPlayerIsEnteringNewTilemap()
-})
-game.onUpdateInterval(500, function () {
-	
+    if (isDebugging) {
+        debugging()
+        engine_sprite_ui_tps.setText(convertToText(engine_currentTPS))
+        engine_sprite_ui_tps.setPosition(scene.cameraProperty(CameraProperty.X) - 60, scene.cameraProperty(CameraProperty.Y) - 40)
+    }
 })
