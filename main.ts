@@ -206,26 +206,30 @@ function checkPlayerIsEnteringNewTilemap () {
         if (doesTilemapExist(currentTileMap_x + 1, currentTileMap_y)) {
             currentTileMap_x += 1
             loadTileMap()
-            player_sprite.x = player_sprite.width
         }
     } else if (player_sprite.x <= 0 + player_sprite.width / 2) {
         if (doesTilemapExist(currentTileMap_x - 1, currentTileMap_y)) {
             currentTileMap_x += -1
             loadTileMap()
-            player_sprite.x = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelWidth) - player_sprite.width
         }
     } else if (player_sprite.y <= 0 + player_sprite.height / 2) {
         if (doesTilemapExist(currentTileMap_x, currentTileMap_y - 1)) {
             currentTileMap_y += -1
             loadTileMap()
-            player_sprite.y = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelHeight) - player_sprite.height
         }
     } else if (player_sprite.y >= tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelHeight) - player_sprite.width / 2) {
         if (doesTilemapExist(currentTileMap_x, currentTileMap_y + 1)) {
             currentTileMap_y += 1
             loadTileMap()
-            player_sprite.y = 0 + player_sprite.height
         }
+    }
+    if (true) {
+    	
+    } else {
+        player_sprite.x = player_sprite.width
+        player_sprite.x = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelWidth) - player_sprite.width
+        player_sprite.y = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelHeight) - player_sprite.height
+        player_sprite.y = 0 + player_sprite.height
     }
 }
 function checkPlayerMovement_y () {
