@@ -7,6 +7,21 @@ namespace SpriteKind {
     export const ui = SpriteKind.create()
 }
 /**
+ * TO DO:
+ * 
+ * - re-do the mapping system
+ * 
+ * - Enter-able caves and areas that vary in light
+ * 
+ * - lighting system
+ * 
+ * - combat
+ * 
+ * - item/loot drops
+ * 
+ * - draw/log tick rate
+ */
+/**
  * To Do:
  */
 /**
@@ -46,6 +61,13 @@ function setCurrentPlayerAnimationState () {
 }
 function hideMinimap () {
 	
+}
+function debugging () {
+    engine_ticks += 1
+    console.logValue("ticks", engine_ticks)
+    engine_currentMsSinceStart = game.runtime()
+    engine_previousMsSinceStart = game.runtime()
+    engine_delta = 0
 }
 function checkPlayerMovement_x () {
     if (controller.left.isPressed() || controller.right.isPressed()) {
@@ -126,8 +148,8 @@ function setupWorld () {
 function updateMinimapImage () {
     if (is_ui_enabled == 1) {
         updateMinimapPosition()
-        minimap2 = minimap.minimap(MinimapScale.Eighth, 1, 8)
-        minimap.includeSprite(minimap2, player_sprite, MinimapSpriteScale.Double)
+        minimap2 = minimap.minimap(MinimapScale.Half, 1, 8)
+        minimap.includeSprite(minimap2, player_sprite, MinimapSpriteScale.MinimapScale)
         minimap_sprite.setImage(minimap.getImage(minimap2))
     } else {
         minimap_sprite.setImage(img`
@@ -158,6 +180,7 @@ function loadTileMap () {
 function checkInputs () {
     if (controller.B.isPressed() && b_button_was_pressed == 0) {
         is_ui_enabled = 1 - is_ui_enabled
+        isPaused = 1 - is_ui_enabled
         b_button_was_pressed = 1
     } else if (!(controller.B.isPressed()) && b_button_was_pressed == 1) {
         b_button_was_pressed = 0
@@ -265,27 +288,37 @@ let currentTileMap_y = 0
 let currentTileMap_x = 0
 let tileID = 0
 let player_speed = 0
+let engine_delta = 0
+let engine_previousMsSinceStart = 0
+let engine_currentMsSinceStart = 0
+let engine_ticks = 0
 let player_sprite: Sprite = null
 let minimap_sprite: Sprite = null
 let tilemaps: tiles.TileMapData[][] = []
+let isPaused = 0
 let is_ui_enabled = 0
 setupPlayer()
 setupWorld()
 is_ui_enabled = 0
+let isDebugging = 0
+isPaused = 0
 game.onUpdate(function () {
-    // This currently:
-    // - Checks if the player is pressing a key
-    // - so it can "disable player friction"
-    // - and then re-enable it when the player stops pressing a key
-    // 
-    // But, if I want to add enemies or things that "bump" the player around, I'll have to figure out a different way to do this.
-    checkPlayerMovement_x()
-    checkPlayerMovement_y()
-    setCurrentPlayerAnimationState()
-    checkInputs()
-    updateMinimapImage()
-    checkPlayerIsEnteringNewTilemap()
-})
-game.onUpdateInterval(500, function () {
-	
+    if (!(isPaused)) {
+        // This currently:
+        // - Checks if the player is pressing a key
+        // - so it can "disable player friction"
+        // - and then re-enable it when the player stops pressing a key
+        // 
+        // But, if I want to add enemies or things that "bump" the player around, I'll have to figure out a different way to do this.
+        checkPlayerMovement_x()
+        checkPlayerMovement_y()
+        setCurrentPlayerAnimationState()
+        checkInputs()
+        checkPlayerIsEnteringNewTilemap()
+    } else {
+        updateMinimapImage()
+    }
+    if (isDebugging) {
+        debugging()
+    }
 })
