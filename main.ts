@@ -25,10 +25,17 @@ namespace SpriteKind {
  * To Do:
  */
 /**
- * Doing:
+ * Add Lava Damage
  * 
- * - Switching tile-maps when you touch the edge of the screen
+ * Add fighting mecanics
+ * 
+ * Add ai and texture
+ * 
+ * Add loot
  */
+// Doing:
+// 
+// - Switching tile-maps when you touch the edge of the screen
 function doesTilemapExist (x: number, y: number) {
     if (x < tilemaps.length && x > 0) {
         if (y < tilemaps[x].length && y > 0) {
@@ -119,7 +126,7 @@ function setupWorld () {
     tilemap`level3`,
     tilemap`level5`,
     tilemap`level8`,
-    tilemap`level15`
+    tilemap`level`
     ]]
     currentTileMap_x = 2
     currentTileMap_y = 0
@@ -300,9 +307,9 @@ let is_ui_enabled = 0
 setupPlayer()
 setupWorld()
 is_ui_enabled = 0
-let isDebugging = 0
 isPaused = 0
 game.onUpdate(function () {
+    let isDebugging = 0
     if (!(isPaused)) {
         // This currently:
         // - Checks if the player is pressing a key
