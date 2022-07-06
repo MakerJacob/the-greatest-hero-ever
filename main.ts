@@ -155,6 +155,7 @@ function loadTileMap () {
     currentTileMap_column = tilemaps[currentTileMap_x]
     currentTileMap = currentTileMap_column[currentTileMap_y]
     tiles.setCurrentTilemap(currentTileMap)
+    tiles.placeOnRandomTile(player_sprite, assets.tile`myTile`)
 }
 function checkInputs () {
     if (controller.B.isPressed() && b_button_was_pressed == 0) {
