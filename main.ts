@@ -61,8 +61,8 @@ namespace SpriteKind {
 // 
 // - Switching tile-maps when you touch the edge of the screen
 function doesTilemapExist (x: number, y: number) {
-    if (x < tilemaps.length && x > 0) {
-        if (y < tilemaps[x].length && y > 0) {
+    if (x < tilemaps.length && x >= 0) {
+        if (y < tilemaps[x].length && y >= 0) {
             return true
         } else {
             return false
@@ -131,8 +131,9 @@ function setupWorld () {
     tilemap`level8`,
     tilemap`level`
     ]]
-    currentTileMap_x = 2
-    currentTileMap_y = 3
+    currentTileMap_x = 0
+    currentTileMap_y = 0
+    isInOverworld = 1
     loadTileMap()
 }
 function createMinimapImage () {
@@ -206,30 +207,26 @@ function checkPlayerIsEnteringNewTilemap () {
         if (doesTilemapExist(currentTileMap_x + 1, currentTileMap_y)) {
             currentTileMap_x += 1
             loadTileMap()
+            player_sprite.x = player_sprite.width
         }
     } else if (player_sprite.x <= 0 + player_sprite.width / 2) {
         if (doesTilemapExist(currentTileMap_x - 1, currentTileMap_y)) {
             currentTileMap_x += -1
             loadTileMap()
+            player_sprite.x = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelWidth) - player_sprite.width
         }
     } else if (player_sprite.y <= 0 + player_sprite.height / 2) {
         if (doesTilemapExist(currentTileMap_x, currentTileMap_y - 1)) {
             currentTileMap_y += -1
             loadTileMap()
+            player_sprite.y = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelHeight) - player_sprite.height
         }
     } else if (player_sprite.y >= tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelHeight) - player_sprite.width / 2) {
         if (doesTilemapExist(currentTileMap_x, currentTileMap_y + 1)) {
             currentTileMap_y += 1
             loadTileMap()
+            player_sprite.y = 0 + player_sprite.height
         }
-    }
-    if (true) {
-    	
-    } else {
-        player_sprite.x = player_sprite.width
-        player_sprite.x = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelWidth) - player_sprite.width
-        player_sprite.y = tileUtil.tilemapProperty(currentTileMap, tileUtil.TilemapProperty.PixelHeight) - player_sprite.height
-        player_sprite.y = 0 + player_sprite.height
     }
 }
 function checkPlayerMovement_y () {
@@ -251,6 +248,7 @@ let currentTileMap_column: tiles.TileMapData[] = []
 let minimap2: minimap.Minimap = null
 let minimap_y = 0
 let minimap_x = 0
+let isInOverworld = 0
 let currentTileMap_y = 0
 let currentTileMap_x = 0
 let player_speed = 0
@@ -286,7 +284,9 @@ game.onUpdate(function () {
     checkPlayerMovement_y()
     setCurrentPlayerAnimationState()
     checkInputs()
-    checkPlayerIsEnteringNewTilemap()
+    if (isInOverworld) {
+        checkPlayerIsEnteringNewTilemap()
+    }
     if (isDebugging) {
         debugging()
         engine_sprite_ui_tps.setText(convertToText(engine_currentTPS))
