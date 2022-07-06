@@ -19,6 +19,10 @@ namespace SpriteKind {
  * 
  * - item/loot drops
  * 
+ * - re-create pause system + draw minimap
+ * 
+ * DONE:
+ * 
  * - draw/log tick rate
  */
 /**
@@ -58,9 +62,6 @@ function setCurrentPlayerAnimationState () {
     } else {
         characterAnimations.setCharacterState(player_sprite, characterAnimations.rule(Predicate.NotMoving))
     }
-}
-function hideMinimap () {
-	
 }
 function debugging () {
     engine_currentSecondTicks += 1
@@ -106,6 +107,9 @@ function setupWorld () {
     currentTileMap_x = 2
     currentTileMap_y = 0
     loadTileMap()
+}
+function createMinimapImage () {
+    // Not using this right now
     minimap_sprite = sprites.create(assets.image`arstarst`, SpriteKind.ui)
     minimap_x = -45
     minimap_y = -25
@@ -117,7 +121,7 @@ function updateMinimapImage () {
         minimap.includeSprite(minimap2, player_sprite, MinimapSpriteScale.MinimapScale)
         minimap_sprite.setImage(minimap.getImage(minimap2))
     } else {
-        minimap_sprite.setImage(assets.image`arst`)
+        minimap_sprite.destroy()
     }
 }
 function loadTileMap () {
@@ -240,21 +244,17 @@ if (isDebugging) {
     engine_sprite_ui_tps = textsprite.create("0", 8, 1)
 }
 game.onUpdate(function () {
-    if (!(isPaused)) {
-        // This currently:
-        // - Checks if the player is pressing a key
-        // - so it can "disable player friction"
-        // - and then re-enable it when the player stops pressing a key
-        // 
-        // But, if I want to add enemies or things that "bump" the player around, I'll have to figure out a different way to do this.
-        checkPlayerMovement_x()
-        checkPlayerMovement_y()
-        setCurrentPlayerAnimationState()
-        checkInputs()
-        checkPlayerIsEnteringNewTilemap()
-    } else {
-        updateMinimapImage()
-    }
+    // This currently:
+    // - Checks if the player is pressing a key
+    // - so it can "disable player friction"
+    // - and then re-enable it when the player stops pressing a key
+    // 
+    // But, if I want to add enemies or things that "bump" the player around, I'll have to figure out a different way to do this.
+    checkPlayerMovement_x()
+    checkPlayerMovement_y()
+    setCurrentPlayerAnimationState()
+    checkInputs()
+    checkPlayerIsEnteringNewTilemap()
     if (isDebugging) {
         debugging()
         engine_sprite_ui_tps.setText(convertToText(engine_currentTPS))
